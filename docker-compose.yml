@@ -1,0 +1,65 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./volumes/mongo:/data/db
+
+  web:
+    image: auditize
+    build: .
+    pull_policy: never
+    depends_on:
+      - mongo
+    entrypoint:
+      [
+        "gunicorn",
+        "auditize:asgi()",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "-w",
+        "2",
+        "-b",
+        "0.0.0.0:80",
+      ]
+    env_file: "auditize.env"
+    environment:
+      - AUDITIZE_MONGODB_URI=mongodb://root:root@mongo:27017/
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+
+  scheduler:
+    image: auditize
+    pull_policy: never
+    depends_on:
+      - mongo
+    command: ["schedule"]
+    env_file: "auditize.env"
+    environment:
+      - AUDITIZE_MONGODB_URI=mongodb://root:root@mongo:27017/
+      # we set PYTHONUNBUFFERED, otherwise the print() from "schedule" are not shown
+      - PYTHONUNBUFFERED=1
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./volumes/html:/usr/share/nginx/html
+      - ./volumes/certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    environment:
+      - DEFAULT_EMAIL=${DEFAULT_EMAIL}
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - ./volumes/certs:/etc/nginx/certs:rw
+      - ./volumes/acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
