@@ -1,4 +1,4 @@
-# docker-compose environment for Auditize
+# Docker Compose environment for Auditize
 
 ## Introduction
 
