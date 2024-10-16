@@ -7,10 +7,12 @@ This repository contains a Docker Compose environment for [Auditize](https://www
 - a `mongo` service for the database,
 - a [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy) and [acme-companion](https://github.com/nginx-proxy/acme-companion) services for reverse proxy and SSL certificate management.
 
-This environment uses [acme-companion](https://github.com/nginx-proxy/acme-companion) to automatically generate SSL certificates using [Let's Encrypt](https://letsencrypt.org/). It means that you need to have a public domain name pointing to the server running this Docker Compose environment, and this domain name must be accessible on ports 80 and 443. Please check the
+This environment uses [acme-companion](https://github.com/nginx-proxy/acme-companion) to automatically generate SSL certificates using [Let's Encrypt](https://letsencrypt.org/). It means that you need to have a **public domain name** pointing to the server running this Docker Compose environment, and this domain name must be accessible on ports 80 and 443. Please check the
 [acme-companion documentation](https://github.com/nginx-proxy/acme-companion) for more details.
 
 This docker-compose environment will store all persisted data in subdirectories of the `volumes` directory.
+
+**Beware** that it is a very basic way to deploy Auditize, and is not intended for production use as is.
 
 ## Usage
 
