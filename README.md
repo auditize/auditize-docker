@@ -38,3 +38,8 @@ There are alternative ways to start the environment without using `sudo`, such a
 
 - binding non-privileged ports (8000 and 4443 for instance) in `docker-compose.yml` and making a network redirection from 80 and 443 to 8000 and 4443,
 - or modifying the `net.ipv4.ip_unprivileged_port_start` Linux sysctl parameter to a value of `80` or lower.
+
+Once the docker environment is up and running, you'll need to follow the post `docker compose up -d` instructions in the [Auditize installation guide](https://www.auditize.org/install/#docker-compose) regarding:
+
+- MongoDB Replica Set initialization
+- Auditize's first user bootstrap

@@ -1,6 +1,8 @@
 services:
   mongo:
     image: mongo
+    hostname: mongo # we need a static hostname for MongoDB replication
+    command: ["--replSet", "rs0"]
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
